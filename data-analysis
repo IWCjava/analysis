@@ -1,0 +1,137 @@
+import numpy as np
+import pandas as pd
+from scipy import stats
+import scipy as scipy
+import matplotlib.pyplot as plt
+
+
+excel2005 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2005.xlsx")
+excel2006 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2006.xlsx")
+excel2007 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2007.xlsx")
+excel2008 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2008.xlsx")
+excel2009 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2009.xlsx")
+excel2010 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2010.xlsx")
+excel2011 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2011.xlsx")
+excel2012 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2012.xlsx")
+excel2013 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2013.xlsx")
+excel2014 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2014.xlsx")
+excel2015 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2015.xlsx")
+excel2016 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2016.xlsx")
+excel2017 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2017.xlsx")
+excel2018 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2018.xlsx")
+excel2019 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2019.xlsx")
+excel2020 = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/2020.xlsx")
+tickerlist = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/tickerlist.xlsx")
+EPS_pre_growth =pd.read_excel("C:/Users/imanu/Downloads/thesis/data/EPS_pre_growth.xlsx")
+EPS_post_growth = pd.read_excel("C:/Users/imanu/Downloads/thesis/data/EPS_post_growth.xlsx")
+df_2005 = pd.DataFrame(excel2005).fillna(0)
+df_2006 = pd.DataFrame(excel2006).fillna(0)
+df_2007 = pd.DataFrame(excel2007).fillna(0)
+df_2008 = pd.DataFrame(excel2008).fillna(0)
+df_2009 = pd.DataFrame(excel2009).fillna(0)
+df_2010 = pd.DataFrame(excel2010).fillna(0)
+df_2011 = pd.DataFrame(excel2011).fillna(0)
+df_2012 = pd.DataFrame(excel2012).fillna(0)
+df_2013 = pd.DataFrame(excel2013).fillna(0)
+df_2014 = pd.DataFrame(excel2014).fillna(0)
+df_2015 = pd.DataFrame(excel2015).fillna(0)
+df_2016 = pd.DataFrame(excel2016).fillna(0)
+df_2017 = pd.DataFrame(excel2017).fillna(0)
+df_2018 = pd.DataFrame(excel2018).fillna(0)
+df_2019 = pd.DataFrame(excel2019).fillna(0)
+df_2020 = pd.DataFrame(excel2020).fillna(0)
+df_EPS_pre_growth = pd.DataFrame(EPS_pre_growth).fillna(0)
+df_EPS_post_growth = pd.DataFrame(EPS_post_growth).fillna(0)
+df_sector = pd.DataFrame(tickerlist).astype("string")
+repl_dict = {'[kK]': '*1000', '[mM]': '*1000000', '[bB]': '*1000000000', '[tT]': '*1000000000000' }
+df_EPS_pre_growth = df_EPS_pre_growth[["EPS_2005","EPS_2006","EPS_2007",'EPS_2008',"EPS_2009","EPS_2010","EPS_2011","EPS_2012"]].replace(repl_dict, regex=True).applymap(pd.eval)
+df_EPS_post_growth = df_EPS_post_growth[["EPS_2012","EPS_2013","EPS_2014",'EPS_2015',"EPS_2016","EPS_2017","EPS_2018","EPS_2019"]].replace(repl_dict, regex=True).applymap(pd.eval)
+df_EPS_pre_growth = df_EPS_pre_growth.pct_change(axis='columns')
+df_EPS_post_growth = df_EPS_post_growth.pct_change(axis='columns')
+
+n2005 = df_2005[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2005[["ticker"]] = df_2005[["ticker"]].astype("string")
+n2006 = df_2006[["BVPS", "EPS", "CF/NI", 'NI/Profit', "P/E", "Price", "Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2006[["ticker"]] = df_2006[["ticker"]].astype("string")
+n2006c = pd.merge(n2005[["ticker", "EPS"]],
+                  n2006[["ticker", "EPS"]], how="inner", on="ticker")
+n2006c = n2006c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2006["EPS_%"] = n2006c["EPS_y"]
+n2007 = df_2007[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2007[["ticker"]] = df_2007[["ticker"]].astype("string")
+n2007c = pd.merge(n2006[["ticker", "EPS"]],
+                  n2007[["ticker", "EPS"]], how="inner", on="ticker")
+n2007c = n2007c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2007["EPS_%"] = n2007c["EPS_y"]
+n2008 = df_2008[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2008[["ticker"]] = df_2008[["ticker"]].astype("string")
+n2008c = pd.merge(n2007[["ticker", "EPS"]],
+                  n2008[["ticker", "EPS"]], how="inner", on="ticker")
+n2008c = n2008c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2008["EPS_%"] = n2008c["EPS_y"]
+n2009 = df_2009[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2009[["ticker"]] = df_2009[["ticker"]].astype("string")
+n2009c = pd.merge(n2008[["ticker", "EPS"]],
+                  n2009[["ticker", "EPS"]], how="inner", on="ticker")
+n2009c = n2009c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2009["EPS_%"] = n2009c["EPS_y"]
+n2010 = df_2010[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2010[["ticker"]] = df_2010[["ticker"]].astype("string")
+n2010c = pd.merge(n2009[["ticker", "EPS"]],
+                  n2010[["ticker", "EPS"]], how="inner", on="ticker")
+n2010c = n2010c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2010["EPS_%"] = n2010c["EPS_y"]
+n2011 = df_2011[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2011[["ticker"]] = df_2011[["ticker"]].astype("string")
+n2011c = pd.merge(n2010[["ticker", "EPS"]],
+                  n2011[["ticker", "EPS"]], how="inner", on="ticker")
+n2011c = n2011c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2011["EPS_%"] = n2011c["EPS_y"]
+n2012 = df_2012[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2012[["ticker"]] = df_2012[["ticker"]].astype("string")
+n2012c = pd.merge(n2011[["ticker", "EPS"]],
+                  n2012[["ticker", "EPS"]], how="inner", on="ticker")
+n2012c = n2012c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2012["EPS_%"] = n2012c["EPS_y"]
+n2013 = df_2013[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2013[["ticker"]] = df_2013[["ticker"]].astype("string")
+n2013c = pd.merge(n2012[["ticker", "EPS"]],
+                  n2013[["ticker", "EPS"]], how="inner", on="ticker")
+n2013c = n2006c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2013["EPS_%"] = n2013c["EPS_y"]
+n2014 = df_2014[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2014[["ticker"]] = df_2014[["ticker"]].astype("string")
+n2014c = pd.merge(n2013[["ticker", "EPS"]],
+                  n2014[["ticker", "EPS"]], how="inner", on="ticker")
+n2014c = n2014c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2014["EPS_%"] = n2014c["EPS_y"]
+n2015 = df_2015[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2015[["ticker"]] = df_2015[["ticker"]].astype("string")
+n2015c = pd.merge(n2014[["ticker", "EPS"]],
+                  n2015[["ticker", "EPS"]], how="inner", on="ticker")
+n2015c = n2015c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2015["EPS_%"] = n2015c["EPS_y"]
+n2016 = df_2016[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2016[["ticker"]] = df_2016[["ticker"]].astype("string")
+n2016c = pd.merge(n2015[["ticker", "EPS"]],
+                  n2016[["ticker", "EPS"]], how="inner", on="ticker")
+n2016c = n2006c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2016["EPS_%"] = n2016c["EPS_y"]
+n2017 = df_2017[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2017[["ticker"]] = df_2017[["ticker"]].astype("string")
+n2017c = pd.merge(n2016[["ticker", "EPS"]],
+                  n2017[["ticker", "EPS"]], how="inner", on="ticker")
+n2017c = n2006c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2017["EPS_%"] = n2017c["EPS_y"]
+n2018 = df_2018[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2018[["ticker"]] = df_2018[["ticker"]].astype("string")
+n2018c = pd.merge(n2017[["ticker", "EPS"]],
+                  n2018[["ticker", "EPS"]], how="inner", on="ticker")
+n2018c = n2018c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2018["EPS_%"] = n2018c["EPS_y"]
+n2019 = df_2019[["BVPS","EPS","CF/NI",'NI/Profit',"P/E","Price","Return"]].replace(repl_dict, regex=True).applymap(pd.eval)
+n2019[["ticker"]] = df_2019[["ticker"]].astype("string")
+n2019c = pd.merge(n2018[["ticker", "EPS"]],
+                  n2019[["ticker", "EPS"]], how="inner", on="ticker")
+n2019c = n2019c[["EPS_x", "EPS_y"]].pct_change(axis='columns')
+n2019["EPS_%"] = n2019c["EPS_y"]
